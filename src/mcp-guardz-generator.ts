@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 
 /**
- * MCP (Model Context Protocol) Server for Guardz Generator
+ * MCP (Model Context Protocol) Server for TypeScript Type Guard Generation
  *
- * This MCP server exposes the guardz-generator functionality through a standardized
- * interface, allowing AI assistants to interact with the type guard generator.
+ * This MCP server generates TypeScript type guards from source code through a standardized
+ * interface, allowing AI assistants to create robust runtime validation functions.
+ * The primary functionality is type guard generation - all other tools support this goal.
  */
 
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
@@ -74,14 +75,14 @@ class GuardzGeneratorMCPServer {
         tools: [
           {
             name: 'generate_type_guards',
-            description: 'Generate TypeScript type guards from source files',
+            description: 'Generate TypeScript type guards from source files - PRIMARY FUNCTIONALITY',
             inputSchema: {
               type: 'object',
               properties: {
                 files: {
                   type: 'array',
                   items: { type: 'string' },
-                  description: 'TypeScript files to process',
+                  description: 'TypeScript files to process for type guard generation',
                 },
                 config: {
                   type: 'string',
@@ -109,7 +110,7 @@ class GuardzGeneratorMCPServer {
                 postProcess: {
                   type: 'boolean',
                   description:
-                    'Run lint, prettier, and tsc on generated files (default: true)',
+                    'Run lint, prettier, and tsc on generated type guard files (default: true)',
                 },
                 verbose: {
                   type: 'boolean',
@@ -125,24 +126,24 @@ class GuardzGeneratorMCPServer {
           },
           {
             name: 'discover_files',
-            description: 'Discover TypeScript files using various strategies',
+            description: 'Helper to find TypeScript files for type guard generation',
             inputSchema: {
               type: 'object',
               properties: {
                 cliFiles: {
                   type: 'array',
                   items: { type: 'string' },
-                  description: 'Files specified via CLI',
+                  description: 'Files specified via CLI for type guard generation',
                 },
                 cliIncludes: {
                   type: 'array',
                   items: { type: 'string' },
-                  description: 'Include patterns from CLI',
+                  description: 'Include patterns from CLI for type guard generation',
                 },
                 cliExcludes: {
                   type: 'array',
                   items: { type: 'string' },
-                  description: 'Exclude patterns from CLI',
+                  description: 'Exclude patterns from CLI for type guard generation',
                 },
                 configPath: {
                   type: 'string',
@@ -153,14 +154,14 @@ class GuardzGeneratorMCPServer {
           },
           {
             name: 'validate_typescript',
-            description: 'Validate TypeScript files for compilation errors',
+            description: 'Helper to validate TypeScript before generating type guards',
             inputSchema: {
               type: 'object',
               properties: {
                 files: {
                   type: 'array',
                   items: { type: 'string' },
-                  description: 'TypeScript files to validate',
+                  description: 'TypeScript files to validate before type guard generation',
                 },
               },
               required: ['files'],
@@ -168,14 +169,14 @@ class GuardzGeneratorMCPServer {
           },
           {
             name: 'format_code',
-            description: 'Format TypeScript code using Prettier',
+            description: 'Helper to format generated type guard code',
             inputSchema: {
               type: 'object',
               properties: {
                 files: {
                   type: 'array',
                   items: { type: 'string' },
-                  description: 'Files to format',
+                  description: 'Files to format (typically generated type guard files)',
                 },
               },
               required: ['files'],
@@ -183,14 +184,14 @@ class GuardzGeneratorMCPServer {
           },
           {
             name: 'lint_code',
-            description: 'Lint TypeScript code using ESLint',
+            description: 'Helper to lint generated type guard code',
             inputSchema: {
               type: 'object',
               properties: {
                 files: {
                   type: 'array',
                   items: { type: 'string' },
-                  description: 'Files to lint',
+                  description: 'Files to lint (typically generated type guard files)',
                 },
                 fix: {
                   type: 'boolean',
@@ -202,7 +203,7 @@ class GuardzGeneratorMCPServer {
           },
           {
             name: 'get_project_info',
-            description: 'Get information about the current project',
+            description: 'Helper to get project context for type guard generation',
             inputSchema: {
               type: 'object',
               properties: {},

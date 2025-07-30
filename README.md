@@ -3,18 +3,70 @@
 [![npm version](https://badge.fury.io/js/guardz-generator-mcp.svg)](https://badge.fury.io/js/guardz-generator-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-> MCP (Model Context Protocol) Server for Guardz Generator - TypeScript Type Guard Generation
+> MCP (Model Context Protocol) Server for TypeScript Type Guard Generation
 
-A Model Context Protocol (MCP) server that exposes the powerful type guard generation capabilities of [guardz-generator](https://github.com/thiennp/guardz-generator) through a standardized interface, allowing AI assistants to interact with TypeScript type guard generation.
+A Model Context Protocol (MCP) server that generates **TypeScript type guards** from your TypeScript source code, allowing AI assistants to create robust runtime validation functions through a standardized interface.
 
-## 🚀 Features
+## 🎯 Core Purpose
 
-- **Complete TypeScript Support**: Generate type guards for interfaces, types, unions, intersections, and more
-- **AI Assistant Integration**: Seamless integration with Claude Desktop, Anthropic's Claude, and other MCP-compatible clients
-- **Runtime Validation**: Generate robust runtime validation functions using the [guardz](https://github.com/thiennp/guardz) library
-- **Smart File Discovery**: Automatic discovery of TypeScript files using multiple strategies
-- **Post-Processing**: Integrated linting, formatting, and TypeScript validation
-- **Zero Configuration**: Works out of the box with sensible defaults
+**Generate TypeScript type guards** from interfaces, types, unions, intersections, and complex TypeScript types. This is the primary functionality - everything else supports this goal.
+
+## 🚀 Primary Feature: Type Guard Generation
+
+### What are Type Guards?
+
+Type guards are runtime validation functions that ensure your data matches your TypeScript types:
+
+```typescript
+// Your TypeScript interface
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  age?: number;
+}
+
+// Generated type guard
+export function isUser(value: unknown): value is User {
+  return (
+    isObject(value) &&
+    isString((value as User).id) &&
+    isString((value as User).name) &&
+    isString((value as User).email) &&
+    ((value as User).age === undefined || isNumber((value as User).age))
+  );
+}
+```
+
+### Complex Type Examples
+
+Generate type guards for complex types:
+
+```typescript
+interface ApiResponse<T> {
+  data: T;
+  status: 'success' | 'error';
+  message?: string;
+}
+
+type UserResponse = ApiResponse<User>;
+```
+
+Generated type guard:
+
+```typescript
+export function isUserResponse(value: unknown): value is UserResponse {
+  return (
+    isObject(value) &&
+    isUser((value as UserResponse).data) &&
+    (isString((value as UserResponse).status) &&
+      ((value as UserResponse).status === 'success' ||
+        (value as UserResponse).status === 'error')) &&
+    ((value as UserResponse).message === undefined ||
+      isString((value as UserResponse).message))
+  );
+}
+```
 
 ## 📦 Installation
 
@@ -67,11 +119,51 @@ Add the server to your MCP client configuration:
 }
 ```
 
+## 🌐 MCP Client Compatibility
+
+This MCP server is compatible with **many MCP clients** across different platforms:
+
+### **Desktop Applications**
+- **Claude Desktop** - Anthropic's desktop app
+- **VS Code with GitHub Copilot** - Agent mode with MCP support
+- **Warp** - Intelligent terminal with MCP integration
+- **Zed** - High-performance code editor
+- **Windsurf Editor** - Agentic IDE
+- **Theia IDE** - AI-powered development environment
+- **oterm** - Terminal client for Ollama
+- **Tome** - Cross-platform desktop app for local LLMs
+- **Witsy** - AI desktop assistant
+
+### **Web-Based Platforms**
+- **MooPoint** - Web-based AI chat platform
+- **Msty Studio** - Privacy-first AI productivity platform
+- **Superinterface** - AI infrastructure platform
+- **Tambo** - Platform for building custom chat experiences
+- **TypingMind** - Advanced frontend for LLMs
+- **RecurseChat** - Local-first chat client
+- **Shortwave** - AI-powered email client
+- **WhatsMCP** - MCP client for WhatsApp
+
+### **Development Tools**
+- **Postman** - API client with MCP server testing
+- **OpenSumi** - AI Native IDE framework
+- **Roo Code** - AI coding assistance
+- **Zencoder** - Coding agent for VS Code and JetBrains IDEs
+
+### **Enterprise & Cloud Platforms**
+- **NVIDIA Agent Intelligence (AIQ) toolkit** - Enterprise agent framework
+- **Tencent CloudBase AI DevKit** - AI agent building tool
+- **SpinAI** - Observable AI agent framework
+- **Superjoin** - Google Sheets extension
+
+### **Mobile Applications**
+- **systemprompt** - Voice-controlled mobile app (iOS/Android)
+
 ## 🛠️ Available Tools
 
-### `generate_type_guards`
+### Primary Tool: `generate_type_guards`
 
-Generate TypeScript type guards from source files.
+**Generate TypeScript type guards from source files** - This is the main functionality.
 
 **Parameters:**
 - `files` (required): Array of TypeScript files to process
@@ -96,9 +188,12 @@ Generate TypeScript type guards from source files.
 }
 ```
 
-### `discover_files`
+### Supporting Tools
 
-Discover TypeScript files using various strategies.
+These tools support the type guard generation workflow:
+
+#### `discover_files`
+**Helper to find TypeScript files for type guard generation**
 
 **Parameters:**
 - `cliFiles` (optional): Files specified via CLI
@@ -117,9 +212,8 @@ Discover TypeScript files using various strategies.
 }
 ```
 
-### `validate_typescript`
-
-Validate TypeScript files for compilation errors.
+#### `validate_typescript`
+**Helper to validate TypeScript before generating type guards**
 
 **Parameters:**
 - `files` (required): Array of TypeScript files to validate
@@ -134,9 +228,8 @@ Validate TypeScript files for compilation errors.
 }
 ```
 
-### `format_code`
-
-Format TypeScript code using Prettier.
+#### `format_code`
+**Helper to format generated type guard code**
 
 **Parameters:**
 - `files` (required): Array of files to format
@@ -151,9 +244,8 @@ Format TypeScript code using Prettier.
 }
 ```
 
-### `lint_code`
-
-Lint TypeScript code using ESLint.
+#### `lint_code`
+**Helper to lint generated type guard code**
 
 **Parameters:**
 - `files` (required): Array of files to lint
@@ -170,9 +262,8 @@ Lint TypeScript code using ESLint.
 }
 ```
 
-### `get_project_info`
-
-Get information about the current project.
+#### `get_project_info`
+**Helper to get project context for type guard generation**
 
 **Parameters:** None
 
@@ -262,9 +353,9 @@ The MCP server is built on top of the robust `guardz-generator` library and foll
 ### Key Components:
 
 - **MCP Protocol Layer**: Handles JSON-RPC communication with MCP clients
+- **Type Guard Generator**: Core logic for generating type guards from TypeScript AST
 - **Tool Handlers**: Process specific tool requests (generate, validate, format, etc.)
 - **Service Factory**: Manages dependencies and provides access to guardz-generator services
-- **Type Guard Generator**: Core logic for generating type guards from TypeScript AST
 
 ## 🔧 Development
 
