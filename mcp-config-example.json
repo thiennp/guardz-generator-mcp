@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "guardz-generator": {
+      "command": "guardz-generator-mcp",
+      "env": {
+        "NODE_ENV": "production"
+      }
+    }
+  }
+} 
