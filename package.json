@@ -10,8 +10,8 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "start": "node dist/mcp-guardz-generator.js",
-    "dev": "tsx mcp-guardz-generator.ts",
-    "test": "tsx test-mcp.ts",
+    "dev": "tsx src/mcp-guardz-generator.ts",
+    "test": "tsx src/test-mcp.ts",
     "lint": "eslint src/ --ext .ts",
     "format": "prettier --write src/",
     "type-check": "tsc --noEmit",
