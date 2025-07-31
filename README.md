@@ -20,22 +20,23 @@ Type guards are runtime validation functions that ensure your data matches your 
 ```typescript
 // Your TypeScript interface
 interface User {
-  id: string;
+  id: number;
   name: string;
   email: string;
-  age?: number;
+  isActive: boolean;
 }
 
 // Generated type guard
-export function isUser(value: unknown): value is User {
-  return (
-    isObject(value) &&
-    isString((value as User).id) &&
-    isString((value as User).name) &&
-    isString((value as User).email) &&
-    ((value as User).age === undefined || isNumber((value as User).age))
-  );
-}
+import { isNumber, isString, isBoolean, isType } from 'guardz';
+
+export const isUser = (value: unknown): value is User => {
+  return isType(value, {
+    id: isNumber,
+    name: isString,
+    email: isString,
+    isActive: isBoolean,
+  });
+};
 ```
 
 ### Complex Type Examples
@@ -44,9 +45,10 @@ Generate type guards for complex types:
 
 ```typescript
 interface ApiResponse<T> {
+  success: boolean;
   data: T;
-  status: 'success' | 'error';
   message?: string;
+  timestamp: number;
 }
 
 type UserResponse = ApiResponse<User>;
@@ -55,17 +57,23 @@ type UserResponse = ApiResponse<User>;
 Generated type guard:
 
 ```typescript
-export function isUserResponse(value: unknown): value is UserResponse {
-  return (
-    isObject(value) &&
-    isUser((value as UserResponse).data) &&
-    (isString((value as UserResponse).status) &&
-      ((value as UserResponse).status === 'success' ||
-        (value as UserResponse).status === 'error')) &&
-    ((value as UserResponse).message === undefined ||
-      isString((value as UserResponse).message))
-  );
-}
+import { isBoolean, isNumber, isString, isUndefinedOr, isType } from 'guardz';
+
+export const isApiResponse = <T>(
+  value: unknown,
+  isT: (value: unknown) => value is T
+): value is ApiResponse<T> => {
+  return isType(value, {
+    success: isBoolean,
+    data: isT,
+    message: isUndefinedOr(isString),
+    timestamp: isNumber,
+  });
+};
+
+export const isUserResponse = (value: unknown): value is UserResponse => {
+  return isApiResponse(value, isUser);
+};
 ```
 
 ## 📦 Installation
@@ -284,27 +292,26 @@ Generate type guards for all interfaces in your project:
 ```typescript
 // Your TypeScript interface
 interface User {
-  id: string;
+  id: number;
   name: string;
   email: string;
-  age?: number;
+  isActive: boolean;
 }
 ```
 
 The MCP server will generate:
 
 ```typescript
-import { isString, isNumber, isObject } from 'guardz';
+import { isNumber, isString, isBoolean, isType } from 'guardz';
 
-export function isUser(value: unknown): value is User {
-  return (
-    isObject(value) &&
-    isString((value as User).id) &&
-    isString((value as User).name) &&
-    isString((value as User).email) &&
-    ((value as User).age === undefined || isNumber((value as User).age))
-  );
-}
+export const isUser = (value: unknown): value is User => {
+  return isType(value, {
+    id: isNumber,
+    name: isString,
+    email: isString,
+    isActive: isBoolean,
+  });
+};
 ```
 
 ### Complex Type Guards
@@ -313,9 +320,10 @@ Generate type guards for complex types:
 
 ```typescript
 interface ApiResponse<T> {
+  success: boolean;
   data: T;
-  status: 'success' | 'error';
   message?: string;
+  timestamp: number;
 }
 
 type UserResponse = ApiResponse<User>;
@@ -324,19 +332,67 @@ type UserResponse = ApiResponse<User>;
 Generated type guard:
 
 ```typescript
-import { isString, isObject } from 'guardz';
+import { isBoolean, isNumber, isString, isUndefinedOr, isType } from 'guardz';
 
-export function isUserResponse(value: unknown): value is UserResponse {
-  return (
-    isObject(value) &&
-    isUser((value as UserResponse).data) &&
-    (isString((value as UserResponse).status) &&
-      ((value as UserResponse).status === 'success' ||
-        (value as UserResponse).status === 'error')) &&
-    ((value as UserResponse).message === undefined ||
-      isString((value as UserResponse).message))
-  );
+export const isApiResponse = <T>(
+  value: unknown,
+  isT: (value: unknown) => value is T
+): value is ApiResponse<T> => {
+  return isType(value, {
+    success: isBoolean,
+    data: isT,
+    message: isUndefinedOr(isString),
+    timestamp: isNumber,
+  });
+};
+
+export const isUserResponse = (value: unknown): value is UserResponse => {
+  return isApiResponse(value, isUser);
+};
+```
+
+### Recursive Type Example
+
+```typescript
+interface TreeNode {
+  value: number;
+  children: TreeNode[];
 }
+```
+
+Generated type guard:
+
+```typescript
+import { isNumber, isArrayWithEachItem, isType } from 'guardz';
+
+export const isTreeNode = (value: unknown): value is TreeNode => {
+  return isType(value, {
+    value: isNumber,
+    children: isArrayWithEachItem(isTreeNode),
+  });
+};
+```
+
+### Empty Object Type Example
+
+```typescript
+interface Config {
+  settings: {};
+  metadata: Record<string, unknown>;
+}
+```
+
+Generated type guard:
+
+```typescript
+import { isObjectWithEachItem, isType, isUnknown } from 'guardz';
+
+export const isConfig = (value: unknown): value is Config => {
+  return isType(value, {
+    settings: isType({}), // Uses isType({}) instead of isType<{}>({})
+    metadata: isObjectWithEachItem(isUnknown),
+  });
+};
 ```
 
 ## 🏗️ Architecture
