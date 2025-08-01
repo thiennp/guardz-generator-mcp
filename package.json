@@ -1,6 +1,6 @@
 {
   "name": "guardz-generator-mcp",
-  "version": "1.0.4",
+  "version": "1.11.8",
   "description": "MCP (Model Context Protocol) Server for TypeScript Type Guard Generation - Generate runtime validation functions from TypeScript types",
   "main": "dist/mcp-guardz-generator.js",
   "type": "module",
@@ -51,7 +51,7 @@
   "homepage": "https://github.com/thiennp/guardz-generator-mcp#readme",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^0.4.0",
-    "guardz-generator": "^1.11.6"
+    "guardz-generator": "^1.11.8"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
