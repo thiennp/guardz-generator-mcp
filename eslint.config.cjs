@@ -95,12 +95,6 @@ module.exports = [
       'import/prefer-default-export': 'off',
     },
     settings: {
-      'import/resolver': {
-        typescript: {
-          alwaysTryTypes: true,
-          project: './tsconfig.json',
-        },
-      },
       'import/parsers': {
         '@typescript-eslint/parser': ['.ts', '.tsx'],
       },
