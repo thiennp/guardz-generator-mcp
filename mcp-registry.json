@@ -1,7 +1,7 @@
 {
   "name": "guardz-generator-mcp",
-  "description": "Generate TypeScript type guards from source code through AI assistants",
-  "version": "1.0.0",
+  "description": "Preview, write, and audit guardz runtime type guards from TypeScript types",
+  "version": "2.0.0",
   "author": "Thien Nguyen",
   "repository": {
     "type": "git",
@@ -9,45 +9,23 @@
   },
   "homepage": "https://github.com/thiennp/guardz-generator-mcp#readme",
   "license": "MIT",
-  "keywords": [
-    "mcp",
-    "typescript",
-    "type-guard",
-    "code-generation",
-    "runtime-validation"
-  ],
+  "keywords": ["mcp", "typescript", "type-guard", "guardz", "runtime-validation"],
   "installation": {
     "npm": "npm install -g guardz-generator-mcp",
-    "npx": "npx guardz-generator-mcp",
-    "yarn": "yarn global add guardz-generator-mcp"
+    "npx": "npx -y guardz-generator-mcp"
   },
   "configuration": {
-    "command": "guardz-generator-mcp",
-    "env": {
-      "NODE_ENV": "production"
-    }
+    "command": "guardz-generator-mcp"
   },
   "features": {
     "tools": [
-      "generate_type_guards",
-      "discover_files", 
-      "validate_typescript",
-      "format_code",
-      "lint_code",
-      "get_project_info"
+      "preview_type_guard",
+      "apply_type_guards",
+      "audit_type_guards",
+      "explain_type"
     ],
+    "prompts": ["add-runtime-guard"],
     "transports": ["stdio"],
     "authentication": "none"
-  },
-  "documentation": {
-    "readme": "https://github.com/thiennp/guardz-generator-mcp#readme",
-    "examples": "https://github.com/thiennp/guardz-generator-mcp#usage-examples"
-  },
-  "tags": [
-    "typescript",
-    "type-safety",
-    "code-generation",
-    "runtime-validation",
-    "developer-tools"
-  ]
-} 
+  }
+}

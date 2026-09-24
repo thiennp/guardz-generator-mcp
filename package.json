@@ -1,7 +1,7 @@
 {
   "name": "guardz-generator-mcp",
-  "version": "1.11.8",
-  "description": "MCP (Model Context Protocol) Server for TypeScript Type Guard Generation - Generate runtime validation functions from TypeScript types",
+  "version": "2.0.0",
+  "description": "MCP server that previews, writes, and audits guardz runtime type guards from TypeScript types",
   "main": "dist/mcp-guardz-generator.js",
   "type": "module",
   "bin": {
@@ -11,7 +11,8 @@
     "build": "tsc -p tsconfig.json",
     "start": "node dist/mcp-guardz-generator.js",
     "dev": "tsx src/mcp-guardz-generator.ts",
-    "test": "tsx src/test-mcp.ts",
+    "test": "tsx --test test/**/*.test.ts",
+    "check": "tsx src/mcp-guardz-generator.ts check",
     "lint": "eslint src/ --ext .ts",
     "format": "prettier --write src/",
     "type-check": "tsc --noEmit",
@@ -50,8 +51,9 @@
   },
   "homepage": "https://github.com/thiennp/guardz-generator-mcp#readme",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^0.4.0",
-    "guardz-generator": "^1.11.8"
+    "@modelcontextprotocol/sdk": "^1.30.1",
+    "guardz-generator": "^1.11.8",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
